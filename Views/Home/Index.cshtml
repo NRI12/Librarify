@@ -1,0 +1,183 @@
+﻿@model libraryproject.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "Trang chủ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Banner/Hero Section -->
+<section class="hero-section mb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="display-4 fw-bold">Thư Viện Trực Tuyến</h1>
+                <p class="lead">Khám phá, học hỏi và trải nghiệm với kho tài liệu đa dạng của chúng tôi.</p>
+                <div class="mt-4">
+                    <a href="/TaiLieu/Search" class="btn btn-primary me-2">Tìm kiếm tài liệu</a>
+                    @if (Context.Session.GetInt32("UserId") == null)
+                    {
+                        <a href="/Account/Register" class="btn btn-outline-secondary">Đăng ký thành viên</a>
+                    }
+                    else
+                    {
+                        <a href="/Account/Profile" class="btn btn-outline-secondary">Xem hồ sơ của tôi</a>
+                    }
+                </div>
+            </div>
+            <div class="col-md-6">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Biblioth%C3%A8que_de_l%27Assembl%C3%A9e_Nationale_%28Lunon%29.jpg" class="img-fluid rounded shadow" alt="Thư viện">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Search Section -->
+<section class="quick-search-section bg-light py-4 mb-5 rounded">
+    <div class="container">
+        <h2 class="text-center mb-4">Tìm kiếm nhanh</h2>
+        <form asp-controller="TaiLieu" asp-action="Search" method="get">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <input type="text" name="NhanDe" class="form-control" placeholder="Tên sách...">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" name="TacGia" class="form-control" placeholder="Tác giả...">
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Tìm kiếm
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- Latest Books Section -->
+<section class="latest-books-section mb-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Sách mới nhất</h2>
+            <a href="/TaiLieu" class="btn btn-sm btn-outline-primary">Xem tất cả</a>
+        </div>
+
+        <div class="row">
+            @foreach (var item in Model.LatestBooks)
+            {
+                <div class="col-md-2 col-sm-4 mb-4">
+                    <div class="card h-100 book-card">
+                        <div class="book-cover">
+                            @if (!string.IsNullOrEmpty(item.HinhAnh))
+                            {
+                                <img src="/uploads/books/@item.HinhAnh" class="card-img-top" alt="@item.NhanDe">
+                            }
+                            else
+                            {
+                                <img src="/img/no-cover.jpg" class="card-img-top" alt="No cover">
+                            }
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-title text-truncate" title="@item.NhanDe">@item.NhanDe</h6>
+                            <p class="card-text small text-muted text-truncate">@item.TacGia</p>
+                            <div class="d-grid">
+                                <a href="/TaiLieu/Details/@item.ID" class="btn btn-sm btn-outline-primary">Chi tiết</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories-section mb-5">
+    <div class="container">
+        <h2 class="mb-4">Bộ sưu tập</h2>
+        <div class="row">
+            @foreach (var item in Model.Collections)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 category-card">
+                        <div class="card-body">
+                            <h5 class="card-title">@item.TenBoSuuTap</h5>
+                            <p class="card-text">
+                                @(string.IsNullOrEmpty(item.MoTa) ? "Không có mô tả" :
+                                    (item.MoTa.Length > 100 ? item.MoTa.Substring(0, 97) + "..." : item.MoTa))
+                            </p>
+                            <p class="text-muted">Số lượng tài liệu: @(item.TaiLieus?.Count ?? 0)</p>
+                            <a href="/TaiLieu/Search?BoSuuTapID=@item.ID" class="btn btn-outline-primary">Xem danh sách</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section bg-primary text-white py-5 mb-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 mb-3">
+                <div class="display-4 fw-bold">@Model.Statistics.TotalBooks</div>
+                <p>Tổng số sách</p>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="display-4 fw-bold">@Model.Statistics.TotalUsers</div>
+                <p>Thành viên</p>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="display-4 fw-bold">@Model.Statistics.TotalCollections</div>
+                <p>Bộ sưu tập</p>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="display-4 fw-bold">@Model.Statistics.ActiveLoans</div>
+                <p>Đang mượn</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- News Section -->
+<section class="news-section mb-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Tin tức & thông báo</h2>
+            <a href="#" class="btn btn-sm btn-outline-primary">Xem tất cả</a>
+        </div>
+
+        <div class="row">
+            @foreach (var item in Model.NewsItems)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">@item.Title</h5>
+                            <p class="card-text">@item.Content</p>
+                            <p class="text-muted"><small>Ngày đăng: @item.Date</small></p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Animation for stats
+            $('.stats-section .display-4').each(function () {
+                $(this).prop('Counter', 0).animate({
+                    Counter: $(this).text()
+                }, {
+                    duration: 2000,
+                    easing: 'swing',
+                    step: function (now) {
+                        $(this).text(Math.ceil(now));
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,212 @@
+﻿@model libraryproject.Models.TaiLieu
+
+@{
+    ViewData["Title"] = "Chi tiết tài liệu";
+}
+
+<div class="container mt-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="TaiLieu" asp-action="Index">Danh sách tài liệu</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Chi tiết tài liệu</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Hình ảnh sách -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body p-4 d-flex align-items-center justify-content-center">
+                    <div class="book-cover mx-auto" style="height: 350px; max-width: 100%;">
+                        @if (!string.IsNullOrEmpty(Model.HinhAnh))
+                        {
+                            <img src="/uploads/books/@Model.HinhAnh" class="img-fluid" style="max-height: 100%; max-width: 100%; object-fit: contain;" alt="@Model.NhanDe">
+                        }
+                        else
+                        {
+                            <img src="/img/no-cover.jpg" class="img-fluid" style="max-height: 100%; max-width: 100%; object-fit: contain;" alt="Không có ảnh bìa">
+                        }
+                    </div>
+                </div>
+                <div class="card-footer bg-white p-3 text-center border-top">
+                    @if (Model.SoLuongHienCo > 0)
+                    {
+                        <span class="badge bg-success p-2 mb-3 d-inline-block"><i class="fas fa-check me-1"></i>Còn sách (@Model.SoLuongHienCo)</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger p-2 mb-3 d-inline-block"><i class="fas fa-times me-1"></i>Hết sách</span>
+                    }
+
+                    <div class="d-grid gap-2">
+                        @if (Context.Session.GetInt32("UserId") != null)
+                        {
+                            @if (Model.SoLuongHienCo > 0)
+                            {
+                                <a href="#" class="btn btn-primary" onclick="alert('Vui lòng đến thư viện để mượn sách trực tiếp (offline).'); return false;">
+                                    <i class="fas fa-bookmark me-2"></i>Đặt mượn
+                                </a>
+                            }
+
+
+                            @if (!string.IsNullOrEmpty(Model.FilePDF))
+                            {
+                                <a asp-action="ReadOnline" asp-route-id="@Model.ID" class="btn btn-success">
+                                    <i class="fas fa-book-reader me-2"></i>Đọc trực tuyến
+                                </a>
+                            }
+                        }
+                        else
+                        {
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-primary">
+                                <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập để mượn sách
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thông tin chi tiết -->
+        <div class="col-md-8 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white border-bottom">
+                    <h1 class="fs-3 mb-0">@Model.NhanDe</h1>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-3 text-muted">Tác giả:</div>
+                        <div class="col-md-9 fw-semibold">@Model.TacGia</div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3 text-muted">Nhà xuất bản:</div>
+                        <div class="col-md-9">@Model.NhaXuatBan</div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3 text-muted">Năm xuất bản:</div>
+                        <div class="col-md-9">@Model.NamXuatBan</div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3 text-muted">Bộ sưu tập:</div>
+                        <div class="col-md-9">@Model.BoSuuTap.TenBoSuuTap</div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.NoiXuatBan))
+                    {
+                        <div class="row mb-3">
+                            <div class="col-md-3 text-muted">Nơi xuất bản:</div>
+                            <div class="col-md-9">@Model.NoiXuatBan</div>
+                        </div>
+                    }
+
+                    <div class="row mb-3">
+                        <div class="col-md-3 text-muted">Số trang:</div>
+                        <div class="col-md-9">@Model.TongSoTrang</div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.KhoGiay))
+                    {
+                        <div class="row mb-3">
+                            <div class="col-md-3 text-muted">Khổ giấy:</div>
+                            <div class="col-md-9">@Model.KhoGiay</div>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.DDC))
+                    {
+                        <div class="row mb-3">
+                            <div class="col-md-3 text-muted">Mã DDC:</div>
+                            <div class="col-md-9">@Model.DDC</div>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.ThongTinTrachNhiem))
+                    {
+                        <div class="row mb-3">
+                            <div class="col-md-3 text-muted">Thông tin trách nhiệm:</div>
+                            <div class="col-md-9">@Model.ThongTinTrachNhiem</div>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.ThuatNguChuDe))
+                    {
+                        <div class="row mb-3">
+                            <div class="col-md-3 text-muted">Chủ đề:</div>
+                            <div class="col-md-9">
+                                @foreach (var topic in Model.ThuatNguChuDe.Split(',', ';'))
+                                {
+                                    <span class="badge bg-secondary me-1 mb-1">@topic.Trim()</span>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.PhuChu))
+                    {
+                        <div class="row mb-3">
+                            <div class="col-md-3 text-muted">Mô tả:</div>
+                            <div class="col-md-9">@Model.PhuChu</div>
+                        </div>
+                    }
+
+                    <div class="row mb-3">
+                        <div class="col-md-3 text-muted">Mã sách:</div>
+                        <div class="col-md-9">@Model.MaSach</div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3 text-muted">Ngày nhập:</div>
+                        <div class="col-md-9">@Model.NgayNhap.ToString("dd/MM/yyyy")</div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.NoiLuuTru))
+                    {
+                        <div class="row mb-3">
+                            <div class="col-md-3 text-muted">Vị trí lưu trữ:</div>
+                            <div class="col-md-9">@Model.NoiLuuTru</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sách ngẫu nhiên -->
+    <div class="mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fs-4">Có thể bạn cũng thích</h2>
+            <a href="/TaiLieu" class="btn btn-sm btn-outline-primary">Xem tất cả sách</a>
+        </div>
+
+        <div class="row">
+            @foreach (var item in ViewBag.RandomBooks)
+            {
+                <div class="col-md-3 col-sm-6 mb-4">
+                    <div class="card h-100 book-card">
+                        <div class="book-cover">
+                            @if (!string.IsNullOrEmpty(item.HinhAnh))
+                            {
+                                <img src="/uploads/books/@item.HinhAnh" class="card-img-top" alt="@item.NhanDe">
+                            }
+                            else
+                            {
+                                <img src="/img/no-cover.jpg" class="card-img-top" alt="No cover">
+                            }
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-title text-truncate" title="@item.NhanDe">@item.NhanDe</h6>
+                            <p class="card-text small text-muted text-truncate">@item.TacGia</p>
+                            <div class="d-grid">
+                                <a href="/TaiLieu/Details/@item.ID" class="btn btn-sm btn-outline-primary">Chi tiết</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

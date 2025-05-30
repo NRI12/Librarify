@@ -1,0 +1,106 @@
+﻿@model libraryproject.ViewModels.PhieuMuonAdmin.PhieuMuonAdminViewModel
+
+@{
+    ViewData["Title"] = "Thêm mới Phiếu mượn";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Thêm mới Phiếu mượn</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/Admin">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Quản lý Phiếu mượn</a></li>
+        <li class="breadcrumb-item active">Thêm mới</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-edit mr-1"></i>
+            Thông tin Phiếu mượn
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="MaPhieuMuon" class="control-label"></label>
+                            <input asp-for="MaPhieuMuon" class="form-control" />
+                            <span asp-validation-for="MaPhieuMuon" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="NguoiDungID" class="control-label"></label>
+                            <select asp-for="NguoiDungID" class="form-control" asp-items="ViewBag.NguoiDungs">
+                                <option value="">-- Chọn người mượn --</option>
+                            </select>
+                            <span asp-validation-for="NguoiDungID" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="NhanVienID" class="control-label"></label>
+                            <select asp-for="NhanVienID" class="form-control" asp-items="ViewBag.NhanViens">
+                                <option value="">-- Chọn nhân viên --</option>
+                            </select>
+                            <span asp-validation-for="NhanVienID" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="NgayMuon" class="control-label"></label>
+                            <input asp-for="NgayMuon" class="form-control" type="date" />
+                            <span asp-validation-for="NgayMuon" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="NgayHenTra" class="control-label"></label>
+                            <input asp-for="NgayHenTra" class="form-control" type="date" />
+                            <span asp-validation-for="NgayHenTra" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="GhiChu" class="control-label"></label>
+                            <textarea asp-for="GhiChu" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="GhiChu" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Tài liệu mượn</label>
+                    <div class="alert alert-info">Chọn danh sách tài liệu cần mượn</div>
+                    <div class="row">
+                        @foreach (var taiLieu in ViewBag.TaiLieus)
+                        {
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" name="selectedTaiLieus" value="@taiLieu.Value" id="taiLieu_@taiLieu.Value" />
+                                    <label class="form-check-label" for="taiLieu_@taiLieu.Value">
+                                        @taiLieu.Text
+                                    </label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Lưu
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

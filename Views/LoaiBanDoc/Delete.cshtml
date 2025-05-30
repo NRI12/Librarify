@@ -1,0 +1,58 @@
+﻿@model libraryproject.Models.LoaiBanDoc
+
+@{
+    ViewData["Title"] = "Xóa loại bạn đọc";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">@ViewData["Title"]</h1>
+
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Loại bạn đọc</a></li>
+        <li class="breadcrumb-item active">Xóa</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-trash me-1"></i>
+            Xác nhận xóa loại bạn đọc
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger">
+                <h5 class="alert-heading">Cảnh báo!</h5>
+                <p>Bạn có chắc chắn muốn xóa loại bạn đọc này không?</p>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th style="width: 30%">ID</th>
+                            <td>@Model.ID</td>
+                        </tr>
+                        <tr>
+                            <th>Tên loại bạn đọc</th>
+                            <td>@Model.TenLoai</td>
+                        </tr>
+                        <tr>
+                            <th>Mô tả</th>
+                            <td>@(string.IsNullOrEmpty(Model.MoTa) ? "Không có" : Model.MoTa)</td>
+                        </tr>
+                    </table>
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="ID" />
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash me-1"></i> Xác nhận xóa
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Quay lại
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

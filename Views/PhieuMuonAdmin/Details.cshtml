@@ -1,0 +1,207 @@
+﻿@model libraryproject.ViewModels.PhieuMuonAdmin.PhieuMuonAdminViewModel
+
+@{
+    ViewData["Title"] = "Chi tiết Phiếu mượn";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Chi tiết Phiếu mượn</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/Admin">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Quản lý Phiếu mượn</a></li>
+        <li class="breadcrumb-item active">Chi tiết</li>
+    </ol>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <i class="fas fa-info-circle mr-1"></i>
+                    Thông tin Phiếu mượn
+                </div>
+                <div>
+                    @if (Model.TrangThai == "Đang mượn")
+                    {
+                        <a asp-action="TraSach" asp-route-id="@Model.ID" class="btn btn-success">
+                            <i class="fas fa-undo"></i> Trả sách
+                        </a>
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#huyModal" data-id="@Model.ID">
+                            <i class="fas fa-times"></i> Hủy phiếu mượn
+                        </button>
+                    }
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.MaPhieuMuon)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.MaPhieuMuon)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.TenNguoiMuon)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.TenNguoiMuon)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.MaBanDoc)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.MaBanDoc)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.TenNhanVien)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.TenNhanVien)</dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.NgayMuon)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.NgayMuon)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.NgayHenTra)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.NgayHenTra)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.TrangThai)</dt>
+                        <dd class="col-sm-8">
+                            @{
+                                var badgeClass = Model.TrangThai == "Đang mượn" ? "bg-primary" :
+                                Model.TrangThai == "Đã trả" ? "bg-success" :
+                                Model.TrangThai == "Quá hạn" ? "bg-danger" :
+                                Model.TrangThai == "Đã hủy" ? "bg-secondary" : "bg-info";
+                            }
+                            <span class="badge @badgeClass text-white">@Model.TrangThai</span>
+                        </dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.GhiChu)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.GhiChu)</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <h5 class="mt-4">Danh sách tài liệu</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã sách</th>
+                            <th>Tên tài liệu</th>
+                            <th>Tác giả</th>
+                            <th>Trạng thái</th>
+                            <th>Ngày trả</th>
+                            <th>Tiền phạt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.ChiTietPhieuMuons != null && Model.ChiTietPhieuMuons.Any())
+                        {
+                            int i = 1;
+                            foreach (var item in Model.ChiTietPhieuMuons)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@item.MaSach</td>
+                                    <td>@item.TenTaiLieu</td>
+                                    <td>@item.TacGia</td>
+                                    <td>
+                                        @{
+                                            var ctBadgeClass = item.TrangThai == "Đang mượn" ? "bg-primary" :
+                                            item.TrangThai == "Đã trả" ? "bg-success" :
+                                            item.TrangThai == "Mất sách" ? "bg-danger" :
+                                            item.TrangThai == "Hư hỏng" ? "bg-warning" :
+                                            item.TrangThai == "Đã hủy" ? "bg-secondary" : "bg-info";
+                                        }
+                                        <span class="badge @ctBadgeClass text-white">@item.TrangThai</span>
+                                    </td>
+                                    <td>@(item.NgayTra.HasValue ? item.NgayTra.Value.ToString("dd/MM/yyyy") : "-")</td>
+                                    <td>@(item.TienPhat.HasValue ? string.Format("{0:N0} VNĐ", item.TienPhat.Value) : "-")</td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center">Không có thông tin tài liệu</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Hủy phiếu mượn -->
+<div class="modal fade" id="huyModal" tabindex="-1" role="dialog" aria-labelledby="huyModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="huyModalLabel">Xác nhận hủy phiếu mượn</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form asp-controller="PhieuMuonAdmin" asp-action="Huy" method="post">
+                <input type="hidden" name="id" id="phieuMuonId" value="" />
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="lyDo">Lý do hủy:</label>
+                        <textarea name="lyDo" id="lyDo" class="form-control" rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-danger">Xác nhận hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Xử lý modal hủy phiếu mượn
+            $('#huyModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var id = button.data('id');
+                var modal = $(this);
+                modal.find('#phieuMuonId').val(id);
+                console.log("ID phiếu mượn được đặt: " + id);
+            });
+
+            // Kiểm tra lý do trước khi submit
+            $('form[asp-action="Huy"]').on('submit', function(e) {
+                var lyDo = $('#lyDo').val();
+                if (!lyDo || lyDo.trim() === '') {
+                    e.preventDefault();
+                    alert('Vui lòng nhập lý do hủy phiếu mượn!');
+                    return false;
+                }
+                return true;
+            });
+        });
+    </script>
+}

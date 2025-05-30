@@ -1,0 +1,107 @@
+﻿@model libraryproject.ViewModels.NguoiDung.GiaHanTheViewModel
+
+@{
+    ViewData["Title"] = "Gia hạn thẻ thư viện";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">@ViewData["Title"]</h1>
+
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Người dùng</a></li>
+        <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.UserID">Chi tiết</a></li>
+        <li class="breadcrumb-item active">Gia hạn thẻ</li>
+    </ol>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-calendar-plus me-1"></i>
+            Gia hạn thẻ thư viện cho @Model.HoTen
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th style="width: 30%">Mã bạn đọc</th>
+                            <td>@Model.MaBanDoc</td>
+                        </tr>
+                        <tr>
+                            <th>Họ tên</th>
+                            <td>@Model.HoTen</td>
+                        </tr>
+                        <tr>
+                            <th>Ngày hết hạn hiện tại</th>
+                            <td class="@(Model.NgayHetHanHienTai < DateTime.Now ? "text-danger" : "")">
+                                @Model.NgayHetHanHienTai.ToString("dd/MM/yyyy")
+                                @if (Model.NgayHetHanHienTai < DateTime.Now)
+                                {
+                                    <span class="badge bg-danger ms-1">Đã hết hạn</span>
+                                }
+                                else if ((Model.NgayHetHanHienTai - DateTime.Now).TotalDays < 30)
+                                {
+                                    <span class="badge bg-warning text-dark ms-1">Sắp hết hạn</span>
+                                }
+                            </td>
+                        </tr>
+                    </table>
+
+                    <form asp-action="GiaHanThe" method="post" class="mt-4">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="UserID" />
+                        <input type="hidden" asp-for="HoTen" />
+                        <input type="hidden" asp-for="MaBanDoc" />
+                        <input type="hidden" asp-for="NgayHetHanHienTai" />
+
+                        <div class="mb-3">
+                            <label asp-for="SoThangGiaHan" class="form-label"></label>
+                            <input asp-for="SoThangGiaHan" class="form-control" min="1" max="36" />
+                            <span asp-validation-for="SoThangGiaHan" class="text-danger"></span>
+                            <div class="form-text">Nhập số tháng gia hạn (từ 1 đến 36 tháng)</div>
+                        </div>
+
+                        <div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-calendar-plus me-1"></i> Gia hạn thẻ
+                            </button>
+                            <a asp-action="Details" asp-route-id="@Model.UserID" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Quay lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <i class="fas fa-info-circle me-1"></i> Thông tin gia hạn thẻ
+                        </div>
+                        <div class="card-body">
+                            <p>Khi gia hạn thẻ thư viện:</p>
+                            <ul>
+                                <li>Thời hạn sẽ được tính từ ngày hết hạn hiện tại nếu thẻ còn hiệu lực.</li>
+                                <li>Thời hạn sẽ được tính từ ngày hiện tại nếu thẻ đã hết hạn.</li>
+                                <li>Người dùng sẽ nhận được thông báo tự động về việc gia hạn thẻ.</li>
+                                <li>Thời gian gia hạn tối đa là 36 tháng (3 năm).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,169 @@
+﻿@model IEnumerable<libraryproject.ViewModels.TaiLieu.TaiLieuViewModel>
+
+@{
+    ViewData["Title"] = "Quản lý Tài liệu";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Quản lý Tài liệu</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/Admin">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Quản lý Tài liệu</li>
+    </ol>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <i class="fas fa-table mr-1"></i>
+                    Danh sách Tài liệu
+                </div>
+                <div>
+                    <a asp-action="Create" class="btn btn-primary">Thêm mới</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <form asp-action="Index" method="get">
+                        <div class="input-group">
+                            <input type="text" name="searchString" class="form-control" placeholder="Nhập từ khóa tìm kiếm..." value="@ViewData["CurrentFilter"]" />
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search"></i> Tìm kiếm
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>
+                                <a asp-action="Index" asp-route-sortOrder="@ViewData["MaSachSortParam"]">
+                                    @Html.DisplayNameFor(model => model.MaSach)
+                                </a>
+                            </th>
+                            <th>
+                                <a asp-action="Index" asp-route-sortOrder="@ViewData["NhanDeSortParam"]">
+                                    @Html.DisplayNameFor(model => model.NhanDe)
+                                </a>
+                            </th>
+                            <th>
+                                <a asp-action="Index" asp-route-sortOrder="@ViewData["TacGiaSortParam"]">
+                                    @Html.DisplayNameFor(model => model.TacGia)
+                                </a>
+                            </th>
+                            <th>
+                                <a asp-action="Index" asp-route-sortOrder="@ViewData["NamXuatBanSortParam"]">
+                                    @Html.DisplayNameFor(model => model.NamXuatBan)
+                                </a>
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.TenBoSuuTap)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.SoLuongHienCo)
+                            </th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => item.MaSach)</td>
+                                <td>@Html.DisplayFor(modelItem => item.NhanDe)</td>
+                                <td>@Html.DisplayFor(modelItem => item.TacGia)</td>
+                                <td>@Html.DisplayFor(modelItem => item.NamXuatBan)</td>
+                                <td>@Html.DisplayFor(modelItem => item.TenBoSuuTap)</td>
+                                <td>@Html.DisplayFor(modelItem => item.SoLuongHienCo)/@Html.DisplayFor(modelItem => item.SoLuongNhapVe)</td>
+                                <td>
+                                    <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-info btn-sm" title="Chỉnh sửa">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-primary btn-sm" title="Xem chi tiết">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-danger btn-sm" title="Xóa">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (ViewBag.TotalPages > 1)
+            {
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>
+                        Hiển thị @ViewBag.PageStart-@ViewBag.PageEnd trong tổng số @ViewBag.TotalItems bản ghi
+                    </div>
+                    <ul class="pagination">
+                        @if (ViewBag.HasPreviousPage)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="1" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-searchString="@ViewData["CurrentFilter"]">
+                                    <i class="fas fa-angle-double-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-searchString="@ViewData["CurrentFilter"]">
+                                    <i class="fas fa-angle-left"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @for (int i = Math.Max(1, ViewBag.CurrentPage - 2); i <= Math.Min(ViewBag.TotalPages, ViewBag.CurrentPage + 2); i++)
+                        {
+                            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-searchString="@ViewData["CurrentFilter"]">@i</a>
+                            </li>
+                        }
+
+                        @if (ViewBag.HasNextPage)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-searchString="@ViewData["CurrentFilter"]">
+                                    <i class="fas fa-angle-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@ViewBag.TotalPages" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-searchString="@ViewData["CurrentFilter"]">
+                                    <i class="fas fa-angle-double-right"></i>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+    </div>
+</div>

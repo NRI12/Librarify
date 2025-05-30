@@ -1,0 +1,56 @@
+﻿@model libraryproject.ViewModels.BoSuuTap.BoSuuTapViewModel
+
+@{
+    ViewData["Title"] = "Chi tiết bộ sưu tập";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">@ViewData["Title"]</h1>
+
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Bộ sưu tập</a></li>
+        <li class="breadcrumb-item active">Chi tiết</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-info-circle me-1"></i>
+            Chi tiết bộ sưu tập
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th style="width: 30%">ID</th>
+                            <td>@Model.ID</td>
+                        </tr>
+                        <tr>
+                            <th>Tên bộ sưu tập</th>
+                            <td>@Model.TenBoSuuTap</td>
+                        </tr>
+                        <tr>
+                            <th>Mô tả</th>
+                            <td>@(string.IsNullOrEmpty(Model.MoTa) ? "Không có" : Model.MoTa)</td>
+                        </tr>
+                        <tr>
+                            <th>Số lượng tài liệu</th>
+                            <td>@Model.SoLuongTaiLieu</td>
+                        </tr>
+                    </table>
+
+                    <div class="mt-3">
+                        <a asp-action="Edit" asp-route-id="@Model.ID" class="btn btn-primary">
+                            <i class="fas fa-edit me-1"></i> Sửa
+                        </a>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Quay lại
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

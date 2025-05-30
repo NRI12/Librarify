@@ -1,0 +1,55 @@
+﻿@model libraryproject.ViewModels.NhanVien.NhanVienViewModel
+
+@{
+    ViewData["Title"] = "Xóa Nhân viên";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Xóa Nhân viên</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/Admin">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Quản lý Nhân viên</a></li>
+        <li class="breadcrumb-item active">Xóa</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-trash mr-1"></i>
+            Xác nhận xóa Nhân viên
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger">
+                <h5>Bạn có chắc chắn muốn xóa nhân viên này?</h5>
+                <p>Thao tác này không thể hoàn tác.</p>
+            </div>
+
+            <dl class="row">
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.MaNhanVien)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.MaNhanVien)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.HoTen)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.HoTen)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.NgaySinh)</dt>
+                <dd class="col-sm-9">@Model.NgaySinh.ToString("dd/MM/yyyy")</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Email)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.SDT)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.SDT)</dd>
+            </dl>
+
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="ID" />
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Xác nhận xóa
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </a>
+            </form>
+        </div>
+    </div>
+</div>

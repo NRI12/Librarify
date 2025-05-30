@@ -1,0 +1,71 @@
+﻿@* ~/Views/NguoiDung/Delete.cshtml *@
+@model NguoiDung
+
+@{
+    ViewData["Title"] = "Xóa người dùng";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">@ViewData["Title"]</h1>
+
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Người dùng</a></li>
+        <li class="breadcrumb-item active">Xóa</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-trash me-1"></i>
+            Xác nhận xóa người dùng
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger">
+                <h5 class="alert-heading">Cảnh báo!</h5>
+                <p>Bạn có chắc chắn muốn xóa người dùng này không? Thao tác này không thể hoàn tác.</p>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th style="width: 30%">Mã bạn đọc</th>
+                            <td>@Model.MaBanDoc</td>
+                        </tr>
+                        <tr>
+                            <th>Họ tên</th>
+                            <td>@Model.HoTen</td>
+                        </tr>
+                        <tr>
+                            <th>Email</th>
+                            <td>@Model.Email</td>
+                        </tr>
+                        <tr>
+                            <th>Loại bạn đọc</th>
+                            <td>@Model.LoaiBanDoc.TenLoai</td>
+                        </tr>
+                        <tr>
+                            <th>Ngày đăng ký</th>
+                            <td>@Model.NgayThanhVien.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                        <tr>
+                            <th>Vai trò</th>
+                            <td>@(Model.Role == "Admin" ? "Quản trị viên" : "Bạn đọc")</td>
+                        </tr>
+                    </table>
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="ID" />
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash me-1"></i> Xác nhận xóa
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Quay lại
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

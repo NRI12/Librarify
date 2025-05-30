@@ -1,0 +1,135 @@
+﻿@model libraryproject.ViewModels.PhieuMuonAdmin.TraSachAdminViewModel
+
+@{
+    ViewData["Title"] = "Trả sách";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Trả sách</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/Admin">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Quản lý Phiếu mượn</a></li>
+        <li class="breadcrumb-item active">Trả sách</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-undo mr-1"></i>
+            Thông tin Trả sách
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Mã phiếu mượn</dt>
+                        <dd class="col-sm-8">@Model.MaPhieuMuon</dd>
+
+                        <dt class="col-sm-4">Người mượn</dt>
+                        <dd class="col-sm-8">@Model.TenNguoiMuon (@Model.MaBanDoc)</dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Ngày mượn</dt>
+                        <dd class="col-sm-8">@Model.NgayMuon.ToString("dd/MM/yyyy")</dd>
+
+                        <dt class="col-sm-4">Ngày hẹn trả</dt>
+                        <dd class="col-sm-8">@Model.NgayHenTra.ToString("dd/MM/yyyy")</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <form asp-action="TraSach" method="post">
+                <input type="hidden" asp-for="PhieuMuonID" />
+                <input type="hidden" asp-for="MaPhieuMuon" />
+                <input type="hidden" asp-for="TenNguoiMuon" />
+                <input type="hidden" asp-for="MaBanDoc" />
+                <input type="hidden" asp-for="NgayMuon" />
+                <input type="hidden" asp-for="NgayHenTra" />
+
+                <div class="form-group">
+                    <label asp-for="NgayTra" class="control-label"></label>
+                    <input asp-for="NgayTra" class="form-control" type="date" />
+                    <span asp-validation-for="NgayTra" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="GhiChu" class="control-label"></label>
+                    <textarea asp-for="GhiChu" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="GhiChu" class="text-danger"></span>
+                </div>
+
+                <h5 class="mt-4">Danh sách tài liệu</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Mã sách</th>
+                                <th>Tên tài liệu</th>
+                                <th>Trạng thái</th>
+                                <th>Tiền phạt</th>
+                                <th>Ghi chú</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.ChiTietTraSach != null && Model.ChiTietTraSach.Any())
+                            {
+                                for (int i = 0; i < Model.ChiTietTraSach.Count; i++)
+                                {
+                                    var item = Model.ChiTietTraSach[i];
+                                    <tr>
+                                        <td>@(i + 1)</td>
+                                        <td>@item.MaSach</td>
+                                        <td>@item.TenTaiLieu</td>
+                                        <td>
+                                            <input type="hidden" name="ChiTietTraSach[@i].ChiTietPhieuMuonID" value="@item.ChiTietPhieuMuonID" />
+                                            <input type="hidden" name="ChiTietTraSach[@i].TaiLieuID" value="@item.TaiLieuID" />
+                                            <input type="hidden" name="ChiTietTraSach[@i].TenTaiLieu" value="@item.TenTaiLieu" />
+                                            <input type="hidden" name="ChiTietTraSach[@i].MaSach" value="@item.MaSach" />
+
+                                            <select name="ChiTietTraSach[@i].TrangThai" class="form-control">
+                                                <option value="Đã trả" selected>Đã trả</option>
+                                                <option value="Mất sách">Mất sách</option>
+                                                <option value="Hư hỏng">Hư hỏng</option>
+                                                <option value="Đang mượn">Gia hạn</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="ChiTietTraSach[@i].TienPhat" class="form-control" min="0" value="0" />
+                                        </td>
+                                        <td>
+                                            <input type="text" name="ChiTietTraSach[@i].GhiChu" class="form-control" />
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center">Không có thông tin tài liệu</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Lưu thông tin trả sách
+                    </button>
+                    <a asp-action="Details" asp-route-id="@Model.PhieuMuonID" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

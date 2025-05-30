@@ -1,0 +1,239 @@
+﻿@model IEnumerable<libraryproject.ViewModels.PhieuMuonAdmin.PhieuMuonAdminViewModel>
+
+@{
+    ViewData["Title"] = "Quản lý Phiếu mượn";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Quản lý Phiếu mượn</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/Admin">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Quản lý Phiếu mượn</li>
+    </ol>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <i class="fas fa-table mr-1"></i>
+                    Danh sách Phiếu mượn
+                </div>
+                <div>
+                    <a asp-action="Create" class="btn btn-primary">Thêm mới</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <form asp-action="Index" method="get" id="searchForm">
+                        <div class="input-group">
+                            <input type="text" name="searchString" class="form-control" placeholder="Nhập từ khóa tìm kiếm..." value="@ViewData["CurrentFilter"]" />
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search"></i> Tìm kiếm
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-3">
+                    <select name="trangThai" class="form-control" onchange="document.getElementById('searchForm').submit()">
+                        @foreach (var item in ViewBag.TrangThais)
+                        {
+                            <option value="@item.Value" selected="@(item.Value == ViewData["CurrentTrangThai"].ToString())">@item.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>
+                                <a asp-action="Index" asp-route-sortOrder="@ViewData["MaPhieuMuonSortParam"]" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-trangThai="@ViewData["CurrentTrangThai"]">
+                                    @Html.DisplayNameFor(model => model.MaPhieuMuon)
+                                </a>
+                            </th>
+                            <th>@Html.DisplayNameFor(model => model.TenNguoiMuon)</th>
+                            <th>@Html.DisplayNameFor(model => model.MaBanDoc)</th>
+                            <th>
+                                <a asp-action="Index" asp-route-sortOrder="@ViewData["NgayMuonSortParam"]" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-trangThai="@ViewData["CurrentTrangThai"]">
+                                    @Html.DisplayNameFor(model => model.NgayMuon)
+                                </a>
+                            </th>
+                            <th>
+                                <a asp-action="Index" asp-route-sortOrder="@ViewData["NgayHenTraSortParam"]" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-trangThai="@ViewData["CurrentTrangThai"]">
+                                    @Html.DisplayNameFor(model => model.NgayHenTra)
+                                </a>
+                            </th>
+                            <th>
+                                <a asp-action="Index" asp-route-sortOrder="@ViewData["TrangThaiSortParam"]" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-trangThai="@ViewData["CurrentTrangThai"]">
+                                    @Html.DisplayNameFor(model => model.TrangThai)
+                                </a>
+                            </th>
+                            <th>Số lượng mượn</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => item.MaPhieuMuon)</td>
+                                <td>@Html.DisplayFor(modelItem => item.TenNguoiMuon)</td>
+                                <td>@Html.DisplayFor(modelItem => item.MaBanDoc)</td>
+                                <td>@Html.DisplayFor(modelItem => item.NgayMuon)</td>
+                                <td>@Html.DisplayFor(modelItem => item.NgayHenTra)</td>
+                                <td>
+                                    @{
+                                        var badgeClass = item.TrangThai == "Đang mượn" ? "badge-primary" :
+                                        item.TrangThai == "Đã trả" ? "badge-success" :
+                                        item.TrangThai == "Quá hạn" ? "badge-danger" :
+                                        item.TrangThai == "Đã hủy" ? "badge-secondary" : "badge-info";
+                                    }
+                                    <span class="">@item.TrangThai</span>
+                                </td>
+                                <td>@(item.ChiTietPhieuMuons?.Count ?? 0)</td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-info btn-sm" title="Xem chi tiết">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    @if (item.TrangThai == "Đang mượn")
+                                    {
+                                        <a asp-action="TraSach" asp-route-id="@item.ID" class="btn btn-success btn-sm" title="Trả sách">
+                                            <i class="fas fa-undo"></i>
+                                        </a>
+
+                                        <button type="button" class="btn btn-danger btn-sm" title="Hủy phiếu mượn"
+                                                onclick="showHuyModal(@item.ID)">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (ViewBag.TotalPages > 1)
+            {
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>
+                        Hiển thị @ViewBag.PageStart-@ViewBag.PageEnd trong tổng số @ViewBag.TotalItems bản ghi
+                    </div>
+                    <ul class="pagination">
+                        @if (ViewBag.HasPreviousPage)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="1" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-trangThai="@ViewData["CurrentTrangThai"]">
+                                    <i class="fas fa-angle-double-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-trangThai="@ViewData["CurrentTrangThai"]">
+                                    <i class="fas fa-angle-left"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @for (int i = Math.Max(1, ViewBag.CurrentPage - 2); i <= Math.Min(ViewBag.TotalPages, ViewBag.CurrentPage + 2); i++)
+                        {
+                            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-trangThai="@ViewData["CurrentTrangThai"]">@i</a>
+                            </li>
+                        }
+
+                        @if (ViewBag.HasNextPage)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-trangThai="@ViewData["CurrentTrangThai"]">
+                                    <i class="fas fa-angle-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@ViewBag.TotalPages" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-trangThai="@ViewData["CurrentTrangThai"]">
+                                    <i class="fas fa-angle-double-right"></i>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal Hủy phiếu mượn -->
+<div class="modal fade" id="huyModal" tabindex="-1" role="dialog" aria-labelledby="huyModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="huyModalLabel">Xác nhận hủy phiếu mượn</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form asp-controller="PhieuMuonAdmin" asp-action="Huy" method="post">
+                <input type="hidden" name="id" id="phieuMuonId" value="" />
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="lyDo">Lý do hủy:</label>
+                        <textarea name="lyDo" id="lyDo" class="form-control" rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-danger">Xác nhận hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showHuyModal(id) {
+            $('#phieuMuonId').val(id);
+            $('#huyModal').modal('show');
+            return false; // Ngăn chặn sự kiện mặc định
+        }
+
+        $(document).ready(function() {
+            // Kiểm tra form trước khi submit
+            $('form[asp-action="Huy"]').on('submit', function(e) {
+                var lyDo = $('#lyDo').val();
+                if (!lyDo || lyDo.trim() === '') {
+                    e.preventDefault();
+                    alert('Vui lòng nhập lý do hủy phiếu mượn!');
+                    return false;
+                }
+                return true;
+            });
+        });
+    </script>
+}

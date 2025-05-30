@@ -1,0 +1,210 @@
+﻿@model dynamic
+
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Dashboard</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Dashboard</li>
+    </ol>
+
+    <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title">Bạn đọc</h5>
+                            <h2 class="display-4">@ViewBag.TotalUsers</h2>
+                        </div>
+                        <div>
+                            <i class="fas fa-users fa-3x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" asp-controller="NguoiDung" asp-action="Index">Xem chi tiết</a>
+                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title">Tài liệu</h5>
+                            <h2 class="display-4">@ViewBag.TotalBooks</h2>
+                        </div>
+                        <div>
+                            <i class="fas fa-book fa-3x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" asp-controller="TaiLieu" asp-action="Index">Xem chi tiết</a>
+                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title">Đang mượn</h5>
+                            <h2 class="display-4">@ViewBag.ActiveLoans</h2>
+                        </div>
+                        <div>
+                            <i class="fas fa-clipboard-list fa-3x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" asp-controller="PhieuMuonAdmin" asp-action="Index">Xem chi tiết</a>
+                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-danger text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title">Quá hạn</h5>
+                            <h2 class="display-4">@ViewBag.OverdueLoans</h2>
+                        </div>
+                        <div>
+                            <i class="fas fa-exclamation-circle fa-3x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" asp-controller="PhieuMuonAdmin" asp-action="Overdue">Xem chi tiết</a>
+                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-clipboard-list me-1"></i>
+                    Phiếu mượn gần đây
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Mã phiếu</th>
+                                    <th>Người mượn</th>
+                                    <th>Ngày mượn</th>
+                                    <th>Trạng thái</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RecentLoans.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center">Không có dữ liệu</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var item in Model.RecentLoans)
+                                    {
+                                        <tr>
+                                            <td>@item.MaPhieuMuon</td>
+                                            <td>@item.NguoiDung.HoTen</td>
+                                            <td>@item.NgayMuon.ToString("dd/MM/yyyy")</td>
+                                            <td>
+                                                @if (item.TrangThai == "Đang mượn")
+                                                {
+                                                    <span class="badge bg-warning text-dark">Đang mượn</span>
+                                                }
+                                                else if (item.TrangThai == "Đã trả")
+                                                {
+                                                    <span class="badge bg-success">Đã trả</span>
+                                                }
+                                                else if (item.TrangThai == "Quá hạn")
+                                                {
+                                                    <span class="badge bg-danger">Quá hạn</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a asp-controller="PhieuMuon" asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info">
+                                                    Chi tiết
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a asp-controller="PhieuMuon" asp-action="Index" class="btn btn-primary btn-sm">Xem tất cả</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-book me-1"></i>
+                    Tài liệu mới nhất
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Mã sách</th>
+                                    <th>Tên sách</th>
+                                    <th>Loại</th>
+                                    <th>Ngày nhập</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RecentBooks.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center">Không có dữ liệu</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var item in Model.RecentBooks)
+                                    {
+                                        <tr>
+                                            <td>@item.MaSach</td>
+                                            <td>@item.NhanDe</td>
+                                            <td>@item.BoSuuTap.TenBoSuuTap</td>
+                                            <td>@item.NgayNhap.ToString("dd/MM/yyyy")</td>
+                                            <td>
+                                                <a asp-controller="TaiLieu" asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info">
+                                                    Chi tiết
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a asp-controller="TaiLieu" asp-action="Index" class="btn btn-primary btn-sm">Xem tất cả</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,105 @@
+﻿@model libraryproject.ViewModels.Account.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Đăng ký tài khoản";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="text-center">@ViewData["Title"]</h2>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Register" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group row mb-3">
+                            <label asp-for="MaBanDoc" class="col-md-4 col-form-label"></label>
+                            <div class="col-md-8">
+                                <input asp-for="MaBanDoc" class="form-control" />
+                                <span asp-validation-for="MaBanDoc" class="text-danger"></span>
+                                <small class="form-text text-muted">Nhập mã số sinh viên/giảng viên của bạn</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row mb-3">
+                            <label asp-for="HoTen" class="col-md-4 col-form-label"></label>
+                            <div class="col-md-8">
+                                <input asp-for="HoTen" class="form-control" />
+                                <span asp-validation-for="HoTen" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row mb-3">
+                            <label asp-for="Email" class="col-md-4 col-form-label"></label>
+                            <div class="col-md-8">
+                                <input asp-for="Email" class="form-control" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row mb-3">
+                            <label asp-for="SDT" class="col-md-4 col-form-label"></label>
+                            <div class="col-md-8">
+                                <input asp-for="SDT" class="form-control" />
+                                <span asp-validation-for="SDT" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row mb-3">
+                            <label asp-for="Khoa" class="col-md-4 col-form-label"></label>
+                            <div class="col-md-8">
+                                <input asp-for="Khoa" class="form-control" />
+                                <span asp-validation-for="Khoa" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row mb-3">
+                            <label asp-for="LoaiBanDocID" class="col-md-4 col-form-label"></label>
+                            <div class="col-md-8">
+                                <select asp-for="LoaiBanDocID" class="form-control">
+                                    <option value="">-- Chọn loại bạn đọc --</option>
+                                    @foreach (var loai in ViewBag.LoaiBanDocs)
+                                    {
+                                        <option value="@loai.ID">@loai.TenLoai</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="LoaiBanDocID" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row mb-3">
+                            <label asp-for="MatKhau" class="col-md-4 col-form-label"></label>
+                            <div class="col-md-8">
+                                <input asp-for="MatKhau" class="form-control" />
+                                <span asp-validation-for="MatKhau" class="text-danger"></span>
+                                <small class="form-text text-muted">Mật khẩu phải có ít nhất 6 ký tự</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row mb-3">
+                            <label asp-for="XacNhanMatKhau" class="col-md-4 col-form-label"></label>
+                            <div class="col-md-8">
+                                <input asp-for="XacNhanMatKhau" class="form-control" />
+                                <span asp-validation-for="XacNhanMatKhau" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-8 offset-md-4">
+                                <button type="submit" class="btn btn-primary">Đăng ký</button>
+                                <a asp-action="Login" class="btn btn-outline-secondary">Đã có tài khoản? Đăng nhập</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,78 @@
+﻿@model libraryproject.ViewModels.NhanVien.NhanVienViewModel
+
+@{
+    ViewData["Title"] = "Thêm mới Nhân viên";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Thêm mới Nhân viên</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/Admin">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Quản lý Nhân viên</a></li>
+        <li class="breadcrumb-item active">Thêm mới</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-edit mr-1"></i>
+            Thông tin Nhân viên
+        </div>
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="MaNhanVien" class="control-label"></label>
+                            <input asp-for="MaNhanVien" class="form-control" />
+                            <span asp-validation-for="MaNhanVien" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="HoTen" class="control-label"></label>
+                            <input asp-for="HoTen" class="form-control" />
+                            <span asp-validation-for="HoTen" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="NgaySinh" class="control-label"></label>
+                            <input asp-for="NgaySinh" class="form-control" type="date" />
+                            <span asp-validation-for="NgaySinh" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Email" class="control-label"></label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="SDT" class="control-label"></label>
+                            <input asp-for="SDT" class="form-control" />
+                            <span asp-validation-for="SDT" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Lưu
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

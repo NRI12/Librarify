@@ -1,0 +1,152 @@
+﻿@model libraryproject.ViewModels.TaiLieu.TaiLieuViewModel
+
+@{
+    ViewData["Title"] = "Chi tiết Tài liệu";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Chi tiết Tài liệu</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/Admin">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Quản lý Tài liệu</a></li>
+        <li class="breadcrumb-item active">Chi tiết</li>
+    </ol>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <i class="fas fa-book mr-1"></i>
+                    Thông tin Tài liệu
+                </div>
+                <div>
+                    <a asp-action="Edit" asp-route-id="@Model.ID" class="btn btn-info">
+                        <i class="fas fa-edit"></i> Chỉnh sửa
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    @if (!string.IsNullOrEmpty(Model.HinhAnh))
+                    {
+                        <img src="/uploads/books/@Model.HinhAnh" alt="Hình ảnh sách" class="img-fluid mb-3" style="max-height: 300px;" />
+                    }
+                    else
+                    {
+                        <div class="text-center p-4 bg-light mb-3">
+                            <i class="fas fa-image fa-5x text-muted"></i>
+                            <p class="mt-2 text-muted">Không có hình ảnh</p>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.FilePDF))
+                    {
+                        <div class="mb-3">
+                            <a href="/uploads/pdfs/@Model.FilePDF" target="_blank" class="btn btn-info btn-block">
+                                <i class="fas fa-file-pdf"></i> Xem file PDF
+                            </a>
+                        </div>
+                    }
+                </div>
+                <div class="col-md-8">
+                    <h4>@Model.NhanDe</h4>
+                    <hr />
+                    <dl class="row">
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.MaSach)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.MaSach)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.TacGia)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.TacGia)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.NhaXuatBan)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.NhaXuatBan)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.NamXuatBan)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.NamXuatBan)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.TongSoTrang)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.TongSoTrang)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.DDC)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.DDC)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.TenBoSuuTap)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.TenBoSuuTap)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.ThuatNguChuDe)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.ThuatNguChuDe)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.NoiLuuTru)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.NoiLuuTru)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.SoLuongNhapVe)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.SoLuongNhapVe)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.SoLuongHienCo)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.SoLuongHienCo)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.NgayNhap)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.NgayNhap)</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <h5>Thông tin bổ sung</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.NhanDeSongSong)</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.NhanDeSongSong)</dd>
+
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.PhanConLaiNhanDe)</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.PhanConLaiNhanDe)</dd>
+
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.ThongTinTrachNhiem)</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.ThongTinTrachNhiem)</dd>
+
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.NoiXuatBan)</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.NoiXuatBan)</dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Cutter)</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.Cutter)</dd>
+
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.KhoGiay)</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.KhoGiay)</dd>
+
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Khoa)</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.Khoa)</dd>
+
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.KyHieuKho)</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.KyHieuKho)</dd>
+                        </dl>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <dt>@Html.DisplayNameFor(model => model.PhuChu)</dt>
+                    <dd>@Html.DisplayFor(model => model.PhuChu)</dd>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

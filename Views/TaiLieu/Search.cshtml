@@ -1,0 +1,307 @@
+﻿@model libraryproject.ViewModels.TaiLieu.TaiLieuSearchViewModel
+
+@{
+    ViewData["Title"] = "Tìm kiếm nâng cao";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="mb-4">@ViewData["Title"]</h1>
+
+            <!-- Form tìm kiếm với thiết kế mới -->
+            <div class="card mb-5 shadow-sm search-form">
+                <div class="card-body p-4">
+                    <form asp-action="Search" method="get">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="NhanDe" class="form-label">Nhan đề</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-book"></i></span>
+                                    <input asp-for="NhanDe" class="form-control" placeholder="Nhập nhan đề...">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="TacGia" class="form-label">Tác giả</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user-edit"></i></span>
+                                    <input asp-for="TacGia" class="form-control" placeholder="Nhập tên tác giả...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mt-2">
+                            <div class="col-md-4">
+                                <label asp-for="NhaXuatBan" class="form-label">Nhà xuất bản</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                    <input asp-for="NhaXuatBan" class="form-control" placeholder="Nhập nhà xuất bản...">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="NamXuatBan" class="form-label">Năm xuất bản</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                    <input asp-for="NamXuatBan" class="form-control" type="number" min="1900" max="@DateTime.Now.Year" placeholder="Nhập năm...">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="BoSuuTapID" class="form-label">Bộ sưu tập</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-layer-group"></i></span>
+                                    <select asp-for="BoSuuTapID" class="form-select" asp-items="ViewBag.BoSuuTaps">
+                                        <option value="0">-- Tất cả --</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mt-2">
+                            <div class="col-md-12">
+                                <label asp-for="ThuatNguChuDe" class="form-label">Chủ đề</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                                    <input asp-for="ThuatNguChuDe" class="form-control" placeholder="Nhập chủ đề...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-primary px-5 py-2">
+                                    <i class="fas fa-search me-2"></i>Tìm kiếm
+                                </button>
+                                <a asp-action="Index" class="btn btn-outline-secondary px-4 py-2 ms-2">
+                                    <i class="fas fa-arrow-left me-2"></i>Quay lại
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Hiển thị kết quả tìm kiếm -->
+            @if (Model.Results != null)
+            {
+                <div class="search-results">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="mb-0">Kết quả tìm kiếm</h2>
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-primary p-2 me-3">Tìm thấy @ViewBag.TotalItems kết quả</span>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-secondary active" id="gridViewBtn">
+                                    <i class="fas fa-th-large"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" id="listViewBtn">
+                                    <i class="fas fa-list"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (!Model.Results.Any())
+                    {
+                        <div class="alert alert-info d-flex align-items-center" role="alert">
+                            <i class="fas fa-info-circle me-3 fs-4"></i>
+                            <div>
+                                Không tìm thấy tài liệu nào phù hợp với tiêu chí tìm kiếm. Vui lòng thử lại với từ khóa khác.
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Grid View (hiển thị mặc định) -->
+                        <div id="gridView" class="row">
+                            @foreach (var item in Model.Results)
+                            {
+                                <div class="col-md-3 col-sm-6 mb-4">
+                                    <div class="card h-100 book-card">
+                                        <div class="book-cover">
+                                            @if (!string.IsNullOrEmpty(item.HinhAnh))
+                                            {
+                                                <img src="/uploads/books/@item.HinhAnh" class="card-img-top" alt="@item.NhanDe">
+                                            }
+                                            else
+                                            {
+                                                <img src="/img/no-cover.jpg" class="card-img-top" alt="No cover">
+                                            }
+                                        </div>
+                                        <div class="card-body d-flex flex-column">
+                                            <h5 class="card-title text-truncate" title="@item.NhanDe">@item.NhanDe</h5>
+                                            <p class="card-text mb-1"><small class="text-muted">Tác giả: @item.TacGia</small></p>
+                                            <p class="card-text mb-1"><small class="text-muted">NXB: @item.NhaXuatBan, @item.NamXuatBan</small></p>
+                                            <p class="card-text mb-2"><small class="text-muted">Loại: @item.BoSuuTap.TenBoSuuTap</small></p>
+
+                                            @if (item.SoLuongHienCo > 0)
+                                            {
+                                                <span class="badge bg-success mb-2"><i class="fas fa-check me-1"></i>Còn sách (@item.SoLuongHienCo)</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger mb-2"><i class="fas fa-times me-1"></i>Hết sách</span>
+                                            }
+
+                                            <div class="mt-auto pt-2 d-flex gap-2">
+                                                <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info flex-grow-1">
+                                                    <i class="fas fa-info-circle me-1"></i>Chi tiết
+                                                </a>
+                                                @if (!string.IsNullOrEmpty(item.FilePDF))
+                                                {
+                                                    <a asp-action="ReadOnline" asp-route-id="@item.ID" class="btn btn-sm btn-success flex-grow-1">
+                                                        <i class="fas fa-book-reader me-1"></i>Đọc online
+                                                    </a>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- List View (ẩn mặc định) -->
+                        <div id="listView" class="d-none">
+                            <div class="card shadow-sm">
+                                <div class="card-body p-0">
+                                    <div class="list-group list-group-flush">
+                                        @foreach (var item in Model.Results)
+                                        {
+                                            <div class="list-group-item list-group-item-action p-3">
+                                                <div class="row align-items-center">
+                                                    <div class="col-md-2 col-sm-3 mb-2 mb-md-0">
+                                                        <div style="height: 120px; display: flex; align-items: center; justify-content: center;">
+                                                            @if (!string.IsNullOrEmpty(item.HinhAnh))
+                                                            {
+                                                                <img src="/uploads/books/@item.HinhAnh" class="img-fluid" style="max-height: 100%; max-width: 100%; object-fit: contain;" alt="@item.NhanDe">
+                                                            }
+                                                            else
+                                                            {
+                                                                <img src="/img/no-cover.jpg" class="img-fluid" style="max-height: 100%; max-width: 100%; object-fit: contain;" alt="No cover">
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-8 col-sm-7">
+                                                        <h5 class="mb-1">@item.NhanDe</h5>
+                                                        <p class="mb-1">Tác giả: <span class="fw-semibold">@item.TacGia</span></p>
+                                                        <p class="mb-1">Xuất bản: @item.NhaXuatBan, @item.NamXuatBan</p>
+                                                        <p class="mb-1">Loại: @item.BoSuuTap.TenBoSuuTap</p>
+                                                        @if (item.SoLuongHienCo > 0)
+                                                        {
+                                                            <span class="badge bg-success"><i class="fas fa-check me-1"></i>Còn sách (@item.SoLuongHienCo)</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge bg-danger"><i class="fas fa-times me-1"></i>Hết sách</span>
+                                                        }
+                                                    </div>
+                                                    <div class="col-md-2 col-sm-2 text-end">
+                                                        <div class="d-flex flex-column gap-2">
+                                                            <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info">
+                                                                <i class="fas fa-info-circle me-1"></i>Chi tiết
+                                                            </a>
+                                                            @if (!string.IsNullOrEmpty(item.FilePDF))
+                                                            {
+                                                                <a asp-action="ReadOnline" asp-route-id="@item.ID" class="btn btn-sm btn-success">
+                                                                    <i class="fas fa-book-reader me-1"></i>Đọc online
+                                                                </a>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Phân trang cải tiến -->
+                        <nav aria-label="Page navigation" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                @if (ViewBag.CurrentPage > 1)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" asp-action="Search" asp-route-page="1"
+                                           asp-route-NhanDe="@Model.NhanDe" asp-route-TacGia="@Model.TacGia"
+                                           asp-route-NhaXuatBan="@Model.NhaXuatBan" asp-route-NamXuatBan="@Model.NamXuatBan"
+                                           asp-route-BoSuuTapID="@Model.BoSuuTapID" asp-route-ThuatNguChuDe="@Model.ThuatNguChuDe">
+                                            <i class="fas fa-angle-double-left"></i>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" asp-action="Search" asp-route-page="@(ViewBag.CurrentPage - 1)"
+                                           asp-route-NhanDe="@Model.NhanDe" asp-route-TacGia="@Model.TacGia"
+                                           asp-route-NhaXuatBan="@Model.NhaXuatBan" asp-route-NamXuatBan="@Model.NamXuatBan"
+                                           asp-route-BoSuuTapID="@Model.BoSuuTapID" asp-route-ThuatNguChuDe="@Model.ThuatNguChuDe">
+                                            <i class="fas fa-angle-left"></i>
+                                        </a>
+                                    </li>
+                                }
+
+                                @{
+                                    int startPage = Math.Max(1, ViewBag.CurrentPage - 2);
+                                    int endPage = Math.Min(ViewBag.TotalPages, startPage + 4);
+                                }
+
+                                @for (int i = startPage; i <= endPage; i++)
+                                {
+                                    <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                        <a class="page-link" asp-action="Search" asp-route-page="@i"
+                                           asp-route-NhanDe="@Model.NhanDe" asp-route-TacGia="@Model.TacGia"
+                                           asp-route-NhaXuatBan="@Model.NhaXuatBan" asp-route-NamXuatBan="@Model.NamXuatBan"
+                                           asp-route-BoSuuTapID="@Model.BoSuuTapID" asp-route-ThuatNguChuDe="@Model.ThuatNguChuDe">@i</a>
+                                    </li>
+                                }
+
+                                @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" asp-action="Search" asp-route-page="@(ViewBag.CurrentPage + 1)"
+                                           asp-route-NhanDe="@Model.NhanDe" asp-route-TacGia="@Model.TacGia"
+                                           asp-route-NhaXuatBan="@Model.NhaXuatBan" asp-route-NamXuatBan="@Model.NamXuatBan"
+                                           asp-route-BoSuuTapID="@Model.BoSuuTapID" asp-route-ThuatNguChuDe="@Model.ThuatNguChuDe">
+                                            <i class="fas fa-angle-right"></i>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" asp-action="Search" asp-route-page="@ViewBag.TotalPages"
+                                           asp-route-NhanDe="@Model.NhanDe" asp-route-TacGia="@Model.TacGia"
+                                           asp-route-NhaXuatBan="@Model.NhaXuatBan" asp-route-NamXuatBan="@Model.NamXuatBan"
+                                           asp-route-BoSuuTapID="@Model.BoSuuTapID" asp-route-ThuatNguChuDe="@Model.ThuatNguChuDe">
+                                            <i class="fas fa-angle-double-right"></i>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </nav>
+
+                        <!-- Thống kê trang -->
+                        <div class="text-center text-muted mt-2">
+                            <small>Hiển thị @ViewBag.PageStart-@ViewBag.PageEnd trong tổng số @ViewBag.TotalItems tài liệu</small>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Xử lý chuyển đổi giữa chế độ xem lưới và danh sách
+            $('#gridViewBtn').click(function() {
+                $('#gridView').removeClass('d-none');
+                $('#listView').addClass('d-none');
+                $(this).addClass('active');
+                $('#listViewBtn').removeClass('active');
+            });
+
+            $('#listViewBtn').click(function() {
+                $('#listView').removeClass('d-none');
+                $('#gridView').addClass('d-none');
+                $(this).addClass('active');
+                $('#gridViewBtn').removeClass('active');
+            });
+        });
+    </script>
+}

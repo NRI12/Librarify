@@ -1,0 +1,59 @@
+﻿@model libraryproject.ViewModels.NhanVien.NhanVienViewModel
+
+@{
+    ViewData["Title"] = "Chi tiết Nhân viên";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Chi tiết Nhân viên</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/Admin">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Quản lý Nhân viên</a></li>
+        <li class="breadcrumb-item active">Chi tiết</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <i class="fas fa-info-circle mr-1"></i>
+                    Thông tin Nhân viên
+                </div>
+                <div>
+                    <a asp-action="Edit" asp-route-id="@Model.ID" class="btn btn-info">
+                        <i class="fas fa-edit"></i> Chỉnh sửa
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-2 text-center">
+                    <i class="fas fa-user-tie fa-8x text-primary mb-3"></i>
+                </div>
+                <div class="col-md-10">
+                    <dl class="row">
+                        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.MaNhanVien)</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.MaNhanVien)</dd>
+
+                        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.HoTen)</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.HoTen)</dd>
+
+                        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.NgaySinh)</dt>
+                        <dd class="col-sm-9">@Model.NgaySinh.ToString("dd/MM/yyyy")</dd>
+
+                        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Email)</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+
+                        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.SDT)</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.SDT)</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

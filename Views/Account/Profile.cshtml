@@ -1,0 +1,272 @@
+﻿@model libraryproject.ViewModels.Account.ProfileViewModel
+
+@{
+    ViewData["Title"] = "Trang cá nhân";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Thông tin cá nhân</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWq8AN1oIjnI6zRRagMaesK-gySwwH7irPFQ&s" alt="Avatar" class="rounded-circle" width="100" height="100">
+                        <h4 class="mt-2">@Model.NguoiDung.HoTen</h4>
+                        <p class="text-muted">@Model.NguoiDung.LoaiBanDoc.TenLoai</p>
+                    </div>
+
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Mã bạn đọc
+                            <span class="text-primary">@Model.NguoiDung.MaBanDoc</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Email
+                            <span>@Model.NguoiDung.Email</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Số điện thoại
+                            <span>@(string.IsNullOrEmpty(Model.NguoiDung.SDT) ? "Chưa cập nhật" : Model.NguoiDung.SDT)</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Ngày hết hạn
+                            <span class="@(Model.NguoiDung.NgayHetHan < DateTime.Now ? "text-danger" : "text-success")">
+                                @Model.NguoiDung.NgayHetHan.ToString("dd/MM/yyyy")
+                            </span>
+                        </li>
+                    </ul>
+
+                    <div class="d-grid gap-2 mt-3">
+                        <a asp-action="EditProfile" class="btn btn-outline-primary">Chỉnh sửa thông tin</a>
+                        <a asp-action="ChangePassword" class="btn btn-outline-secondary">Đổi mật khẩu</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="col-md-8">
+            <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="sachdangmuon-tab" data-bs-toggle="tab" data-bs-target="#sachdangmuon" type="button" role="tab" aria-controls="sachdangmuon" aria-selected="true">
+                        Sách đang mượn
+                        @if (Model.PhieuMuonDangMuon.Any())
+                        {
+                            <span class="badge bg-primary ms-1">@Model.PhieuMuonDangMuon.Sum(p => p.ChiTietPhieuMuons.Count)</span>
+                        }
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="lichsu-tab" data-bs-toggle="tab" data-bs-target="#lichsu" type="button" role="tab" aria-controls="lichsu" aria-selected="false">
+                        Lịch sử mượn/trả
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="thongbao-tab" data-bs-toggle="tab" data-bs-target="#thongbao" type="button" role="tab" aria-controls="thongbao" aria-selected="false">
+                        Thông báo
+                        @if (Model.ThongBao.Any(t => !t.DaDoc))
+                        {
+                            <span class="badge bg-danger ms-1">@Model.ThongBao.Count(t => !t.DaDoc)</span>
+                        }
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="myTabContent">
+                <!-- Sách đang mượn -->
+                <div class="tab-pane fade show active" id="sachdangmuon" role="tabpanel" aria-labelledby="sachdangmuon-tab">
+                    @if (!Model.PhieuMuonDangMuon.Any())
+                    {
+                        <div class="alert alert-info">
+                            Bạn chưa mượn sách nào.
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var phieuMuon in Model.PhieuMuonDangMuon)
+                        {
+                            <div class="card mb-3">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="fw-bold">Phiếu mượn #@phieuMuon.MaPhieuMuon</span>
+                                        <span class="text-muted ms-2">Ngày mượn: @phieuMuon.NgayMuon.ToString("dd/MM/yyyy")</span>
+                                    </div>
+                                    <a asp-action="LoanDetail" asp-route-id="@phieuMuon.ID" class="btn btn-sm btn-outline-primary">Chi tiết</a>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="list-group list-group-flush">
+                                        @foreach (var chiTiet in phieuMuon.ChiTietPhieuMuons)
+                                        {
+                                            <div class="list-group-item">
+                                                <div class="d-flex w-100 justify-content-between align-items-center">
+                                                    <div>
+                                                        <h6 class="mb-1">@chiTiet.TaiLieu.NhanDe</h6>
+                                                        <small>@chiTiet.TaiLieu.TacGia</small>
+                                                    </div>
+                                                    <div class="text-end">
+                                                        <span class="d-block">Hạn trả: @phieuMuon.NgayHenTra.ToString("dd/MM/yyyy")</span>
+                                                        @{
+                                                            var daysRemaining = (phieuMuon.NgayHenTra - DateTime.Now).Days;
+                                                            if (daysRemaining < 0)
+                                                            {
+                                                                <span class="badge bg-danger">Quá hạn @Math.Abs(daysRemaining) ngày</span>
+                                                            }
+                                                            else if (daysRemaining <= 3)
+                                                            {
+                                                                <span class="badge bg-warning text-dark">Còn @daysRemaining ngày</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="badge bg-success">Còn @daysRemaining ngày</span>
+                                                            }
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+
+                <!-- Lịch sử mượn/trả -->
+                <div class="tab-pane fade" id="lichsu" role="tabpanel" aria-labelledby="lichsu-tab">
+                    @if (!Model.LichSuMuonTra.Any())
+                    {
+                        <div class="alert alert-info">
+                            Bạn chưa có lịch sử mượn/trả sách.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Mã phiếu</th>
+                                        <th>Ngày mượn</th>
+                                        <th>Ngày hẹn trả</th>
+                                        <th>Số sách</th>
+                                        <th>Trạng thái</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var phieuMuon in Model.LichSuMuonTra)
+                                    {
+                                        <tr>
+                                            <td>@phieuMuon.MaPhieuMuon</td>
+                                            <td>@phieuMuon.NgayMuon.ToString("dd/MM/yyyy")</td>
+                                            <td>@phieuMuon.NgayHenTra.ToString("dd/MM/yyyy")</td>
+                                            <td>@phieuMuon.ChiTietPhieuMuons.Count</td>
+                                            <td>
+                                                @if (phieuMuon.TrangThai == "Đã trả")
+                                                {
+                                                    <span class="badge bg-success">Đã trả</span>
+                                                }
+                                                else if (phieuMuon.TrangThai == "Trả trễ")
+                                                {
+                                                    <span class="badge bg-danger">Trả trễ</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">@phieuMuon.TrangThai</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a asp-action="LoanDetail" asp-route-id="@phieuMuon.ID" class="btn btn-sm btn-outline-info">Chi tiết</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+
+                <!-- Thông báo -->
+                <div class="tab-pane fade" id="thongbao" role="tabpanel" aria-labelledby="thongbao-tab">
+                    @if (!Model.ThongBao.Any())
+                    {
+                        <div class="alert alert-info">
+                            Bạn không có thông báo nào.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="list-group">
+                            @foreach (var thongBao in Model.ThongBao.OrderByDescending(t => !t.DaDoc).ThenByDescending(t => t.NgayTao))
+                            {
+                                <div class="list-group-item list-group-item-action @(!thongBao.DaDoc ? "bg-light" : "")" id="thongbao-@thongBao.ID">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">
+                                            @thongBao.TieuDe
+                                            @if (!thongBao.DaDoc)
+                                            {
+                                                <span class="badge bg-primary">Mới</span>
+                                            }
+                                        </h5>
+                                        <small>@thongBao.NgayTao.ToString("dd/MM/yyyy HH:mm")</small>
+                                    </div>
+                                    <p class="mb-1">@thongBao.NoiDung</p>
+                                    @if (!thongBao.DaDoc)
+                                    {
+                                        <div class="text-end">
+                                            <button class="btn btn-sm btn-outline-secondary mark-as-read" data-id="@thongBao.ID">Đánh dấu đã đọc</button>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.mark-as-read').click(function() {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '@Url.Action("MarkNotificationAsRead")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function(result) {
+                        if (result.success) {
+                            $('#thongbao-' + id).removeClass('bg-light');
+                            $('#thongbao-' + id).find('.badge').remove();
+                            $('#thongbao-' + id).find('.mark-as-read').remove();
+
+                            // Cập nhật số thông báo trên tab
+                            var unreadCount = $('.mark-as-read').length - 1;
+                            if (unreadCount > 0) {
+                                $('#thongbao-tab .badge').text(unreadCount);
+                            } else {
+                                $('#thongbao-tab .badge').remove();
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}
